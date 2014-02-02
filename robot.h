@@ -2,6 +2,9 @@
 #define ROBOT_H
 
 #include <WPILib.h>
+#include "chassis.h"
+#include "catapult.h"
+#include "collector.h"
 #include "InsightLT_CPP/InsightLT.h"
 using namespace insight;
 
