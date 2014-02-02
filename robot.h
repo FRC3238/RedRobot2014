@@ -2,7 +2,6 @@
 #define ROBOT_H
 
 #include <WPILib.h>
-#include "settings.h"
 #include "InsightLT_CPP/InsightLT.h"
 using namespace insight;
 
