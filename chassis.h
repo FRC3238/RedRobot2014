@@ -8,7 +8,6 @@ class chassis{
 	public:
 		chassis(UINT8 leftFrontTalonPort, UINT8 leftRearTalonPort, UINT8 rightFrontTalonPort, UINT8 rightRearTalonPort);
 
-
 		//Sets the current joystick data
 		void SetJoystickData(float x, float y, float twist);
 

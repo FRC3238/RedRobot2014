@@ -8,9 +8,10 @@ collector::collector(UINT8 liftingTalonPort, UINT8 rollerTalonPort, UINT8 ballSe
 	UpperLimitSensor = new DigitalInput(upperLimitSensorPort);
 	LowerLimitSensor = new DigitalInput(lowerLimitSensorPort);
 	BallReleaseTimer = new Timer();
+	collectorState = lowering;
 }
 
-void collector::Init(){
+void collector::ReInit(){
 	collectorState = lowering;
 }
 
@@ -38,7 +39,7 @@ void collector::Idle(){
 			break;
 
 			case waiting:
-				if(!BallSensor->Get()){
+				if(BallSensor->Get()){
 					LiftingTalon->Set(0.0);
 					RollerTalon->Set(1.0);
 				}
@@ -59,7 +60,7 @@ void collector::Idle(){
 			break;
 
 			case releasing:
-				if((BallReleaseTimer->Get() * 1000.0) < 500.0){
+				if((BallReleaseTimer->Get() * 1000.0) < 2000.0){
 					LiftingTalon->Set(0.0);
 					RollerTalon->Set(1.0);
 				}

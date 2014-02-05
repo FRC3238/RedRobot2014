@@ -24,9 +24,12 @@ void chassis::Idle(){
 	switch(chassisState){
 		
 		case mecanum:
-			mappedX = (xValue * xValue);
-			mappedY = (yValue * yValue);
-			mappedTwist = (twistValue * twistValue);
+			if(xValue < 0) mappedX = -(xValue * xValue);
+			else mappedX = xValue * xValue;
+			if(yValue < 0) mappedY = -(yValue * yValue);
+			else mappedY = yValue * yValue;
+			if(twistValue < 0) mappedTwist = -(twistValue * twistValue);
+			else mappedTwist = twistValue * twistValue;
 			Drivetrain->MecanumDrive_Cartesian(mappedX, mappedY, mappedTwist, 0.0);
 		break;
 

@@ -22,7 +22,10 @@ class robot : public IterativeRobot {
 		void TeleopPeriodic(void);
 	
 	private:
-		
+		Joystick *joystick;
+		chassis *theChassis;
+		catapult *theCatapult;
+		collector *theCollector;
 };
 
 #endif

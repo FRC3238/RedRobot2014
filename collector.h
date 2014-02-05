@@ -9,7 +9,7 @@ class collector{
 		collector(UINT8 liftingTalonPort, UINT8 rollerTalonPort, UINT8 ballSensorPort, UINT8 upperLimitSensorPort, UINT8 lowerLimitSensorPort);
 
 		//Sets the collector state to lowering
-		void Init();
+		void ReInit();
 
 		//Runs the collector automatically, no driver input necessary
 		void Run();
