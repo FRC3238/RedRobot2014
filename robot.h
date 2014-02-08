@@ -26,6 +26,8 @@ class robot : public IterativeRobot {
 		chassis *theChassis;
 		catapult *theCatapult;
 		collector *theCollector;
+		InsightLT insight;
+		IntegerData insight_ballDistance;
 };
 
 #endif

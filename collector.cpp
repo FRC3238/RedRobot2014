@@ -4,10 +4,10 @@
 collector::collector(UINT8 liftingTalonPort, UINT8 rollerTalonPort, UINT8 ballSensorPort, UINT8 upperLimitSensorPort, UINT8 lowerLimitSensorPort){
 	LiftingTalon = new Talon(liftingTalonPort);
 	RollerTalon = new Talon(rollerTalonPort);
-	BallSensor = new DigitalInput(ballSensorPort);
+	BallSensor = new AnalogChannel(ballSensorPort);
 	UpperLimitSensor = new DigitalInput(upperLimitSensorPort);
 	LowerLimitSensor = new DigitalInput(lowerLimitSensorPort);
-	BallReleaseTimer = new Timer();
+	timer = new Timer();
 	collectorState = lowering;
 }
 
@@ -19,18 +19,22 @@ void collector::Run(){
 	enabled = true;
 }
 
+int collector::GetBallSensorValue(){
+	return BallSensor->GetValue();
+}
+
 void collector::Disable(){
 	enabled = false;
 }
 
 void collector::Idle(){
 	if(enabled){
-		BallReleaseTimer->Start();
+		timer->Start();
 		switch(collectorState){
 
 			case lowering:
 				if(LowerLimitSensor->Get()){
-					LiftingTalon->Set(-0.2);
+					LiftingTalon->Set(-0.4);
 					RollerTalon->Set(0.0);
 				}
 				else{
@@ -39,29 +43,40 @@ void collector::Idle(){
 			break;
 
 			case waiting:
-				if(BallSensor->Get()){
+				if(BallSensor->GetValue() < 450){
 					LiftingTalon->Set(0.0);
 					RollerTalon->Set(1.0);
 				}
 				else{
+					timer->Reset();
+					collectorState = waitforball;
+				}
+			break;
+			
+			case waitforball:
+				if((timer->Get() * 1000.0) < 500.0){
+					LiftingTalon->Set(0.0);
+					RollerTalon->Set(1.0);
+				}
+				else{
+					timer->Reset();
 					collectorState = raising;
 				}
 			break;
-
+				
 			case raising:
-				if(UpperLimitSensor->Get()){
-					LiftingTalon->Set(0.4);
+				if((timer->Get() * 1000.0) < 500.0){
+					LiftingTalon->Set(0.7);
 					RollerTalon->Set(1.0);
 				}
 				else{
-					BallReleaseTimer->Reset();
-					collectorState = releasing;
+					collectorState = lowering;
 				}
 			break;
 
-			case releasing:
-				if((BallReleaseTimer->Get() * 1000.0) < 2000.0){
-					LiftingTalon->Set(0.0);
+			case mellowraise:
+				if(BallSensor->GetValue() > 450){
+					LiftingTalon->Set(0.5);
 					RollerTalon->Set(1.0);
 				}
 				else{
@@ -74,6 +89,6 @@ void collector::Idle(){
 	else{
 		LiftingTalon->Set(0.0);
 		RollerTalon->Set(0.0);
-		BallReleaseTimer->Stop();
+		timer->Stop();
 	}
 }

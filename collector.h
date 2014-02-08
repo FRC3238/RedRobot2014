@@ -14,6 +14,9 @@ class collector{
 		//Runs the collector automatically, no driver input necessary
 		void Run();
 
+		//Returns the value from the ball sensor
+		int GetBallSensorValue();
+		
 		//Stops the collector roller and stops the arm in its current position
 		void Disable();
 
@@ -26,15 +29,16 @@ class collector{
 	private:
 		Talon *LiftingTalon;
 		Talon *RollerTalon;
-		DigitalInput *BallSensor;
+		AnalogChannel *BallSensor;
 		DigitalInput *UpperLimitSensor;
 		DigitalInput *LowerLimitSensor;
-		Timer *BallReleaseTimer;
+		Timer *timer;
 		enum collectorState_t{
 			lowering,
 			waiting,
+			waitforball,
 			raising,
-			releasing,
+			mellowraise,
 		};
 		collectorState_t collectorState;
 		bool enabled;

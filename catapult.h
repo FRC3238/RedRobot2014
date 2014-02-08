@@ -8,6 +8,8 @@ class catapult{
 	public:
 		catapult(UINT8 talonOnePort, UINT8 talonTwoPort, UINT8 encoderPortA, UINT8 encoderPortB, UINT8 limitSwitchPort);
 		
+		void ReInit();
+		
 		//Fires the catapult, automatically cycles back to bottom position after firing
 		void Fire();
 		
@@ -19,6 +21,12 @@ class catapult{
 		
 		//Returns the current encoder count
 		int GetEncoderCount();
+		
+		//Returns the current shooter state
+		int GetState();
+		
+		//Resets the encoder
+		void ResetEncoder();
 
 		//Function to be called every loop, this is where all the "work" is actually done		
 		void Idle();
@@ -29,7 +37,7 @@ class catapult{
 		Talon *MotorOneTalon;
 		Talon *MotorTwoTalon;
 		Encoder *CatapultEncoder;
-		DigitalInput *LimitSwitch;
+		Timer *LoweringTimer;
 		enum firingState_t{
 			waiting,
 			firing,

@@ -7,6 +7,10 @@ chassis::chassis(UINT8 leftFrontTalonPort, UINT8 leftRearTalonPort, UINT8 rightF
 	RightFrontTalon = new Talon(rightFrontTalonPort);
 	RightRearTalon = new Talon(rightRearTalonPort);
 	Drivetrain = new RobotDrive(LeftFrontTalon, LeftRearTalon, RightFrontTalon, RightRearTalon);
+	Drivetrain->SetInvertedMotor(RobotDrive::kFrontRightMotor, true);
+	Drivetrain->SetInvertedMotor(RobotDrive::kFrontLeftMotor, false);
+	Drivetrain->SetInvertedMotor(RobotDrive::kRearRightMotor, false);
+	Drivetrain->SetInvertedMotor(RobotDrive::kRearLeftMotor, true);
 	chassisState = mecanum;
 }
 

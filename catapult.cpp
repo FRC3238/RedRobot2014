@@ -4,8 +4,14 @@
 catapult::catapult(UINT8 talonOnePort, UINT8 talonTwoPort, UINT8 encoderPortA, UINT8 encoderPortB, UINT8 limitSwitchPort){
 	MotorOneTalon = new Talon(talonOnePort);
 	MotorTwoTalon = new Talon(talonTwoPort);
-	CatapultEncoder = new Encoder(encoderPortA, encoderPortB, false);
-	LimitSwitch = new DigitalInput(limitSwitchPort);
+	CatapultEncoder = new Encoder(encoderPortA, encoderPortB, true);
+	LoweringTimer = new Timer();
+	LoweringTimer->Start();
+	CatapultEncoder->Start();
+	firingState = waiting;
+}
+
+void catapult::ReInit(){
 	firingState = waiting;
 }
 
@@ -25,6 +31,14 @@ int catapult::GetEncoderCount(){
 	return CatapultEncoder->Get();
 }
 
+int catapult::GetState(){
+	return firingState;
+}
+
+void catapult::ResetEncoder(){
+	CatapultEncoder->Reset();
+}
+
 void catapult::Idle(){
 	switch(firingState){
 		
@@ -42,17 +56,18 @@ void catapult::Idle(){
 			else{
 				MotorOneTalon->Set(0.0);
 				MotorTwoTalon->Set(0.0);
+				LoweringTimer->Reset();
 				firingState = lowering;
 			}
 		break;
 			
 		case lowering:
-			if(LimitSwitch->Get()){
-				firingState = zeroing;
+			if((LoweringTimer->Get() * 1000.0) < 500.0){
+				MotorOneTalon->Set(-0.1);
+				MotorTwoTalon->Set(-0.1);
 			}
 			else{
-				MotorOneTalon->Set(0.1);
-				MotorTwoTalon->Set(0.1);
+				firingState = zeroing;
 			}
 		break;
 	
