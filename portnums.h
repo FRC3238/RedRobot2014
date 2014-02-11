@@ -20,9 +20,11 @@ UINT8 lowerLimitSensorPort = 3;
 UINT8 catapultLimitSwitchPort = 3;
 
 //Analog Inputs
-UINT8 ballSensorPort = 7;
+UINT8 ballSensorPort = 6;
 
 //Driver Station Inputs
 UINT8 joystickPort = 1;
+UINT8 leftUltrasonicPort = 4;
+UINT8 rightUltrasonicPort = 5;
 
 #endif

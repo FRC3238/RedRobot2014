@@ -65,8 +65,8 @@ void collector::Idle(){
 			break;
 				
 			case raising:
-				if((timer->Get() * 1000.0) < 500.0){
-					LiftingTalon->Set(0.7);
+				if((timer->Get() * 1000.0) < 750.0){
+					LiftingTalon->Set(0.8);
 					RollerTalon->Set(1.0);
 				}
 				else{
@@ -76,7 +76,7 @@ void collector::Idle(){
 
 			case mellowraise:
 				if(BallSensor->GetValue() > 450){
-					LiftingTalon->Set(0.5);
+					LiftingTalon->Set(0.4);
 					RollerTalon->Set(1.0);
 				}
 				else{

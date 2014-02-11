@@ -63,8 +63,8 @@ void catapult::Idle(){
 			
 		case lowering:
 			if((LoweringTimer->Get() * 1000.0) < 500.0){
-				MotorOneTalon->Set(-0.1);
-				MotorTwoTalon->Set(-0.1);
+				MotorOneTalon->Set(-0.3);
+				MotorTwoTalon->Set(-0.3);
 			}
 			else{
 				firingState = zeroing;

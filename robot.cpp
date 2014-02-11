@@ -4,15 +4,14 @@
 
 robot::robot(void){
 	joystick = new Joystick(joystickPort);
-	theChassis = new chassis(leftFrontTalonPort, leftRearTalonPort, rightFrontTalonPort, rightRearTalonPort);
+	theChassis = new chassis(leftFrontTalonPort, leftRearTalonPort, rightFrontTalonPort, rightRearTalonPort, leftUltrasonicPort, rightUltrasonicPort);
 	theCatapult = new catapult(catapultTalonOnePort, catapultTalonTwoPort, catapultEncoderPortA, catapultEncoderPortB, catapultLimitSwitchPort);
 	theCollector = new collector(liftingTalonPort, rollerTalonPort, ballSensorPort, upperLimitSensorPort, lowerLimitSensorPort);
 }
 
 void robot::RobotInit() {
-	SmartDashboard::init();
 	theCatapult->SetMotorPower(1.0);
-	insight_ballDistance.setHeader("Dis:");
+	insight_ballDistance.setHeader("Diff:");
 	insight.registerData(insight_ballDistance, 1);
 	insight.startDisplay();
 }
@@ -23,7 +22,7 @@ void robot::DisabledInit() {
 }
 
 void robot::AutonomousInit() {
-	theCollector->Run();
+
 }
 
 void robot::TeleopInit() {
@@ -31,9 +30,9 @@ void robot::TeleopInit() {
 }
 	
 void robot::DisabledPeriodic() {
-	theCatapult->SetStoppingPoint(0);
-	int ballDistance = theCollector->GetBallSensorValue();
-	insight_ballDistance.setData(ballDistance);
+//	theCatapult->SetStoppingPoint(0);
+//	int ballDistance = theChassis->GetUltrasonicDifference();
+//	insight_ballDistance.setData(ballDistance);
 }
 
 void robot::AutonomousPeriodic() {
@@ -41,20 +40,32 @@ void robot::AutonomousPeriodic() {
 }
 	
 void robot::TeleopPeriodic() {
-	int EncoderStoppingPoint = SmartDashboard::GetNumber("EncoderStoppingPoint");
-	float x = joystick->GetRawAxis(1);
-	float y = joystick->GetRawAxis(2);
-	float twist = joystick->GetRawAxis(3);
+	float x = joystick->GetRawAxis(3);
+	float y = -(joystick->GetRawAxis(2));
+	float twist = joystick->GetRawAxis(1);
 	theChassis->SetJoystickData(x, y, twist);
-	if(theCatapult->GetState() != 1){
-		if(joystick->GetRawButton(1)){
-			theCatapult->SetStoppingPoint(EncoderStoppingPoint);
-			theCatapult->ResetEncoder();
-			theCatapult->Fire();
-		}
+	if(joystick->GetRawButton(1)){
+		theCatapult->SetStoppingPoint(150);
+		theCatapult->Fire();
+	}
+	if(joystick->GetRawButton(2)){
+		theCollector->Run();
+	}
+	if(joystick->GetRawButton(3)){
+		theCollector->Disable();
+	}
+	if(joystick->GetRawButton(4)){
+		theCollector->ReInit();
+	}
+	if(joystick->GetRawButton(5)){
+		theChassis->EnableAxisLock();
+	}
+	if(joystick->GetRawButton(6)){
+		theChassis->DisableAxisLock();
 	}
 	theCatapult->Idle();
 	theChassis->Idle();
+	theCollector->Idle();
 }
 
 
