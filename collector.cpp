@@ -27,6 +27,10 @@ void collector::Disable(){
 	enabled = false;
 }
 
+void collector::ManualRaise(){
+	LiftingTalon->Set(0.7);
+}
+
 void collector::Idle(){
 	if(enabled){
 		timer->Start();

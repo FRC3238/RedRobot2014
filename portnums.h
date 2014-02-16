@@ -12,19 +12,22 @@ UINT8 catapultTalonTwoPort = 5;
 UINT8 liftingTalonPort = 1;
 UINT8 rollerTalonPort = 2;
 
+//Servo Ports
+UINT8 autonomousServoPort = 9;
+
 //Digital Inputs
-UINT8 catapultEncoderPortA = 1;
-UINT8 catapultEncoderPortB = 2;
+UINT8 catapultEncoderPortA = 5;
+UINT8 catapultEncoderPortB = 6;
 UINT8 upperLimitSensorPort = 4;
 UINT8 lowerLimitSensorPort = 3;
 UINT8 catapultLimitSwitchPort = 3;
 
 //Analog Inputs
 UINT8 ballSensorPort = 6;
+UINT8 leftUltrasonicPort = 4;
+UINT8 rightUltrasonicPort = 5;
 
 //Driver Station Inputs
 UINT8 joystickPort = 1;
-UINT8 leftUltrasonicPort = 4;
-UINT8 rightUltrasonicPort = 5;
 
 #endif

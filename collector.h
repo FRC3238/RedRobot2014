@@ -22,6 +22,8 @@ class collector{
 
 		//Stops the collector roller and returns the arm to its upper position
 		void Reset();
+		
+		void ManualRaise();
 
 		//Call this function every loop, this is where all the "work" is actually done
 		void Idle();

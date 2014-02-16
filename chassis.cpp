@@ -11,12 +11,6 @@ chassis::chassis(UINT8 leftFrontTalonPort, UINT8 leftRearTalonPort, UINT8 rightF
 	Drivetrain->SetInvertedMotor(RobotDrive::kFrontLeftMotor, true);
 	Drivetrain->SetInvertedMotor(RobotDrive::kRearRightMotor, true);
 	Drivetrain->SetInvertedMotor(RobotDrive::kRearLeftMotor, false);
-//	PIDSourceUltrasonic = new ultrasonicPIDsource(leftUltrasonicPort, rightUltrasonicPort);
-//	PIDOutputRotation = new rotationPIDoutput(Drivetrain);
-//	ChassisPID = new PIDController(0.002, 0, 0, PIDSourceUltrasonic, PIDOutputRotation, 0.05);
-//	ChassisPID->SetSetpoint(0.0);
-//	ChassisPID->SetContinuous(true);
-//	ChassisPID->SetOutputRange(-0.5, 0.5);
 	chassisState = mecanum;
 }
 
@@ -34,19 +28,10 @@ void chassis::DisableAxisLock(){
 	chassisState = mecanum;
 }
 
-double chassis::GetUltrasonicDifference(){
-	return PIDSourceUltrasonic->PIDGet();
-}
-
-int chassis::GetUltrasonicValue(){
-	return PIDSourceUltrasonic->GetUltrasonicValue();
-}
-
 void chassis::Idle(){
 	switch(chassisState){
 		
 		case mecanum:
-			// ChassisPID->Disable();
 			if(xValue < 0) mappedX = -(xValue * xValue);
 			else mappedX = xValue * xValue;
 			if(yValue < 0) mappedY = -(yValue * yValue);
@@ -57,12 +42,7 @@ void chassis::Idle(){
 		break;
 
 		case axisLock:
-//			ChassisPID->Enable();
-//			if(xValue < 0) mappedX = -(xValue * xValue);
-//			else mappedX = xValue * xValue;
-//			if(yValue < 0) mappedY = -(yValue * yValue);
-//			else mappedY = yValue * yValue;
-//			PIDOutputRotation->GetJoystickXY(mappedX, mappedY);
+			
 		break;
 	}
 }

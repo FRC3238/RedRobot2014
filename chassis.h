@@ -2,7 +2,6 @@
 #define CHASSIS_H
 
 #include <WPILib.h>
-#include "ultrasonicPIDsource.h"
 #include "rotationPIDoutput.h"
 
 class chassis{
@@ -18,11 +17,6 @@ class chassis{
 
 		//Disables axis lock
 		void DisableAxisLock();
-		
-		//Gets the difference between the ultrasonic sensors
-		virtual double GetUltrasonicDifference();
-		
-		int GetUltrasonicValue();
 		
 		//Function to be called every loop, this is where the "work" is actually done
 		void Idle();
@@ -43,7 +37,6 @@ class chassis{
 		AnalogChannel *LeftRearSonar;
 		AnalogChannel *RightFrontSonar;
 		AnalogChannel *RightRearSonar;
-		ultrasonicPIDsource *PIDSourceUltrasonic;
 		rotationPIDoutput *PIDOutputRotation;
 		PIDController *ChassisPID;
 		enum chassisState_t{
