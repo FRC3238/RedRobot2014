@@ -13,7 +13,7 @@ class catapult{
 		//Fires the catapult, automatically cycles back to bottom position after firing
 		void Fire();
 		
-		//void SetAutonomousLowering();
+		void AutonomousLower();
 		
 		//Sets the number of encoder "clicks" at which power to the catapult is cut
 		void SetStoppingPoint(int stoppingClicks);
@@ -29,6 +29,8 @@ class catapult{
 		
 		//Resets the encoder
 		void ResetEncoder();
+		
+		void ResetLoweringTimer();
 
 		//Function to be called every loop, this is where all the "work" is actually done		
 		void Idle();
@@ -45,7 +47,7 @@ class catapult{
 			firing,
 			lowering,
 			zeroing,
-			//autonomousLowering,
+			autonomousLowering,
 		};
 		firingState_t firingState;
 };

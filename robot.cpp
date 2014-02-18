@@ -1,19 +1,22 @@
 #include <WPILib.h>
 #include "robot.h"
 #include "portnums.h"
-#include "ultrasonicsensors.h"
+#include "arduinoI2C.h"
 
-robot::robot(void){
+robot::robot(void)
+{
+	I2C = new ArduinoI2C();
 	joystick = new Joystick(joystickPort);
 	theChassis = new chassis(leftFrontTalonPort, leftRearTalonPort, rightFrontTalonPort, rightRearTalonPort, leftUltrasonicPort, rightUltrasonicPort);
 	theCatapult = new catapult(catapultTalonOnePort, catapultTalonTwoPort, catapultEncoderPortA, catapultEncoderPortB, catapultLimitSwitchPort);
-	theCollector = new collector(liftingTalonPort, rollerTalonPort, ballSensorPort, upperLimitSensorPort, lowerLimitSensorPort);
+	theCollector = new collector(liftingTalonPort, rollerTalonPort, I2C, upperLimitSensorPort, lowerLimitSensorPort);
 	AutonomousTimer = new Timer();
 	UnfoldingTimer = new Timer();
 	AutonomousServo = new Servo(autonomousServoPort);
 }
 
-void robot::RobotInit() {
+void robot::RobotInit() 
+{
 	theCatapult->SetMotorPower(1.0);
 //	insight_ballDistance.setHeader("Diff:");
 //	insight.registerData(insight_ballDistance, 1);
@@ -21,28 +24,36 @@ void robot::RobotInit() {
 	SmartDashboard::init();
 }
 	
-void robot::DisabledInit() {
+void robot::DisabledInit() 
+{
 	theCollector->ReInit();
 	theCatapult->ReInit();
 	AutonomousTimer->Stop();
 }
 
-void robot::AutonomousInit() {
-  SmartDashboard::PutNumber("Potential Targets:", 0);
-  SmartDashboard::PutNumber("Target Range:", 0);
-  auto_fired = false;
-  AutonomousTimer->Start();
-  AutonomousTimer->Reset();
-  unfoldingState = moving;
-  theCatapult->ResetEncoder();
-//  theCatapult->SetStoppingPoint(5);
-//  theCatapult->SetMotorPower(0.2);
-  theCatapult->SetStoppingPoint(151);
-  theCatapult->SetMotorPower(1.0);
+void robot::AutonomousInit() 
+{
+	SmartDashboard::PutNumber("Potential Targets:", 0);
+	SmartDashboard::PutNumber("Target Range:", 0);
+	auto_fired = false;
+	AutonomousTimer->Start();
+	AutonomousTimer->Reset();
+	unfoldingState = collectorLower;
+	theCatapult->ResetEncoder();
+	theCatapult->SetMotorPower(1.0);
+	theCollector->ReInit();
+	theCollector->Run();
+//	total_error = 0;
 }
 
-void robot::TeleopInit() {
+void robot::TeleopInit() 
+{
 
+}
+
+void robot::TestInit()
+{
+	
 }
 	
 void robot::DisabledPeriodic() 
@@ -53,55 +64,56 @@ void robot::DisabledPeriodic()
 //	theUltrasonics->Idle();
 //	SmartDashboard::PutNumber("leftVoltage", leftVoltage);
 //	SmartDashboard::PutNumber("rightVoltage", rightVoltage);
-	
-	static ultrasonicsensors Magic(0, 0);
+	int left = 0, right = 0, ball = 0;
 	static int loops = 0;
 	loops++;
-	int left = -1, right = -1;
+	
 	if(loops % 250)
 	{
-		Magic.GetVoltages(left, right);
-		SmartDashboard::PutNumber("Loops", (loops/250));
-		SmartDashboard::PutNumber("Left", left);
-		SmartDashboard::PutNumber("Right", right);
+		I2C->GetValues(left, right,ball);
 	}
-	SmartDashboard::PutNumber("BallSensor:", theCollector->GetBallSensorValue());
+	I2C->Idle();
+	theCatapult->SetStoppingPoint(151);
 }
 
 void robot::AutonomousPeriodic() {
+	I2C->Idle();
+	
   int   num_targets = static_cast<int>(SmartDashboard::GetNumber("Potential Targets:"));
   float target_range = SmartDashboard::GetNumber("Target Range:");
-  float optimal_range = 144;
-  float range_tolerance = 20; //inches
-  range_tolerance = 25;
-//	switch(unfoldingState){
-//		case moving:
-//			theCatapult->Fire();
-//			unfoldingState = waiting;
-//		break;
-//		
-//		case waiting:
-//			if((AutonomousTimer->Get()*1000.0) < 3){
-//				theCollector->Idle();
-//			}
-//			else{
-//				theCatapult->ResetEncoder();
-//				theCatapult->SetStoppingPoint(151);
-//				theCatapult->SetMotorPower(1.0);
-//				theCollector->Disable();
-//				theCollector->Idle();
-//				unfoldingState = done;
-//			}
-//		break;
-//		
-//		case done:
-//			
-//		break;
-//	}
-	
-  if (target_range-optimal_range > range_tolerance && !(auto_fired) && AutonomousTimer->Get() < 9) {
+  float optimal_range = 120;
+  float range_tolerance = 30; //inches
+ // total_error += (target_range - optimal_range);
+  
+  switch(unfoldingState){
+  	  case collectorLower:
+  		  if((AutonomousTimer->Get()*1000.0) < 1250){
+  			  
+  		  }
+  		  else{
+  			  theCatapult->ResetLoweringTimer();
+  			  unfoldingState = shooterLower;
+  		  }
+  	  break;
+  	  
+  	  case shooterLower:
+  		  theCatapult->AutonomousLower();
+  		  unfoldingState = done;
+  	  break;
+  	  
+  	  case done:
+  		  if((AutonomousTimer->Get()*1000.0) < 3000){
+  			  
+  		  }
+  		  else{
+  			  theCollector->Disable();
+  		  }
+  	  break;
+  }
+  if (target_range - optimal_range > range_tolerance && !(auto_fired) && AutonomousTimer->Get() < 9) {
     float x = 0;
-    float y = 0.48;
+    float y = 0.45;
+//    float y = 0.004347826*(target_range - optimal_range)+total_error*0.00000001;
     float twist = 0;
     theChassis->SetJoystickData(x, y, twist);
   }
@@ -112,7 +124,8 @@ void robot::AutonomousPeriodic() {
     float twist = 0;
     theChassis->SetJoystickData(x, y, twist);
     //shoot!
-		theCatapult->SetStoppingPoint(151);
+		theCatapult->SetMotorPower(1.0);
+    	theCatapult->SetStoppingPoint(165);
 		theCatapult->Fire();
 	auto_fired = true;
   }
@@ -122,12 +135,14 @@ void robot::AutonomousPeriodic() {
   	float twist = 0;
   	theChassis->SetJoystickData(x, y, twist);
   }
-	theCatapult  ->Idle(); 
-	theChassis   ->Idle();
+	theCatapult->Idle(); 
+	theChassis->Idle();
 	theCollector->Idle();
 }
 	
 void robot::TeleopPeriodic() {
+	I2C->Idle();
+	
 	float x = joystick->GetRawAxis(3);
 	float y = -(joystick->GetRawAxis(2));
 	float twist = joystick->GetRawAxis(1);
@@ -142,7 +157,7 @@ void robot::TeleopPeriodic() {
 		theCollector->Disable();
 	}
 	if(joystick->GetRawButton(4)){
-		theCollector->ReInit();
+		theCollector->SetManualRollerMode();
 	}
 	if(joystick->GetRawButton(5)){
 		theCatapult->SetStoppingPoint(151);
@@ -156,10 +171,14 @@ void robot::TeleopPeriodic() {
 	if(joystick->GetRawButton(8)){
 		theCatapult->SetStoppingPoint(80);
 	}
+	theCollector->ManualRoller(joystick->GetRawAxis(6));
 	theCatapult->Idle();
 	theChassis->Idle();
 	theCollector->Idle();
 }
 
+void robot::TestPeriodic(){
+	theCollector->ManualRaise();
+}
 
 START_ROBOT_CLASS(robot);

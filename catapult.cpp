@@ -19,9 +19,9 @@ void catapult::Fire(){
 	firingState = firing;
 }
 
-//void catapult::SetAutonomousLowering(){
-//	firingState = autonomousLowering;
-//}
+void catapult::AutonomousLower(){
+	firingState = autonomousLowering;
+}
 
 void catapult::SetStoppingPoint(int clicks){
 	stoppingClicks = clicks;
@@ -41,6 +41,10 @@ int catapult::GetState(){
 
 void catapult::ResetEncoder(){
 	CatapultEncoder->Reset();
+}
+
+void catapult::ResetLoweringTimer(){
+	LoweringTimer->Reset();
 }
 
 void catapult::Idle(){
@@ -80,15 +84,15 @@ void catapult::Idle(){
 			firingState = waiting;
 		break;
 		
-//		case autonomousLowering:
-//			if(CatapultEncoder->Get() > -20){
-//				MotorOneTalon->Set(-0.4);
-//				MotorTwoTalon->Set(-0.4);
-//			}
-//			else{
-//				firingState = firing;
-//			}
-//		break;
+		case autonomousLowering:
+			if((LoweringTimer->Get() * 1000.0) < 500.0){
+				MotorOneTalon->Set(-0.3);
+				MotorTwoTalon->Set(-0.3);
+			}
+			else{
+				firingState = zeroing;
+			}
+		break;
 	}
 }
 

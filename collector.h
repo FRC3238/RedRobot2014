@@ -2,17 +2,21 @@
 #define COLLECTOR_H
 
 #include <WPILib.h>
-
+#include "arduinoI2C.h"
 class collector{
 
 	public:
-		collector(UINT8 liftingTalonPort, UINT8 rollerTalonPort, UINT8 ballSensorPort, UINT8 upperLimitSensorPort, UINT8 lowerLimitSensorPort);
+		collector(UINT8 liftingTalonPort, UINT8 rollerTalonPort, ArduinoI2C* ballSensorPort, UINT8 upperLimitSensorPort, UINT8 lowerLimitSensorPort);
 
 		//Sets the collector state to lowering
 		void ReInit();
 
 		//Runs the collector automatically, no driver input necessary
 		void Run();
+		
+		void SetManualRollerMode();
+		
+		void ManualRoller(float power);
 
 		//Returns the value from the ball sensor
 		int GetBallSensorValue();
@@ -31,10 +35,12 @@ class collector{
 	private:
 		Talon *LiftingTalon;
 		Talon *RollerTalon;
-		AnalogChannel *BallSensor;
+		//AnalogChannel *BallSensor;
 		DigitalInput *UpperLimitSensor;
 		DigitalInput *LowerLimitSensor;
 		Timer *timer;
+		ArduinoI2C* I2C;
+		float manualRollerTalonPower;
 		enum collectorState_t{
 			lowering,
 			waiting,
@@ -43,7 +49,12 @@ class collector{
 			mellowraise,
 		};
 		collectorState_t collectorState;
-		bool enabled;
+		enum collectorMode_t{
+			standard,
+			manualRoller,
+			disabled
+		};
+		collectorMode_t collectorMode;
 };
 
 #endif
