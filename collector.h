@@ -27,6 +27,8 @@ class collector{
 		//Stops the collector roller and returns the arm to its upper position
 		void Reset();
 		
+		void AssistedManualRaise();
+		
 		void ManualRaise();
 
 		//Call this function every loop, this is where all the "work" is actually done
@@ -52,7 +54,8 @@ class collector{
 		enum collectorMode_t{
 			standard,
 			manualRoller,
-			disabled
+			disabled,
+			manualRaise
 		};
 		collectorMode_t collectorMode;
 };

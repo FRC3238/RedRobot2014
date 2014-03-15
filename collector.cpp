@@ -38,8 +38,12 @@ void collector::Disable(){
 	collectorMode = disabled;
 }
 
-void collector::ManualRaise(){
+void collector::AssistedManualRaise(){
 	LiftingTalon->Set(0.3);
+}
+
+void collector::ManualRaise(){
+	collectorMode = manualRaise;
 }
 
 void collector::Idle(){
@@ -113,6 +117,10 @@ void collector::Idle(){
 		RollerTalon->Set(manualRollerTalonPower);
 		LiftingTalon->Set(0.0);
 		timer->Stop();
+	break;
+	
+	case manualRaise:
+		LiftingTalon->Set(0.45);
 	break;
 	}
 }

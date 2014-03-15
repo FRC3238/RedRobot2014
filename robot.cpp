@@ -79,10 +79,10 @@ void robot::DisabledPeriodic()
 void robot::AutonomousPeriodic() {
 	I2C->Idle();
 	
-  int   num_targets = static_cast<int>(SmartDashboard::GetNumber("Potential Targets:"));
-  float target_range = SmartDashboard::GetNumber("Target Range:");
-  float optimal_range = 120;
-  float range_tolerance = 30; //inches
+//  int   num_targets = static_cast<int>(SmartDashboard::GetNumber("Potential Targets:"));
+//  float target_range = SmartDashboard::GetNumber("Target Range:");
+//  float optimal_range = 120;
+//  float range_tolerance = 30; //inches
  // total_error += (target_range - optimal_range);
   
   switch(unfoldingState){
@@ -110,33 +110,56 @@ void robot::AutonomousPeriodic() {
   		  }
   	  break;
   }
-  if (target_range - optimal_range > range_tolerance && !(auto_fired) && AutonomousTimer->Get() < 9) {
-    float x = 0;
-    float y = 0.45;
-//    float y = 0.004347826*(target_range - optimal_range)+total_error*0.00000001;
-    float twist = 0;
-    theChassis->SetJoystickData(x, y, twist);
+  if(I2C->GetRight() > 130){
+	  float x = 0;
+	  float y = 0.6;
+	  float twist = 0;
+	  theChassis->SetJoystickData(x, y, twist);
   }
-  else if ((AutonomousTimer->Get() > 9 || 1 < num_targets) && !(auto_fired)) {
-    //stop
-    float x = 0;
-    float y = 0;
-    float twist = 0;
-    theChassis->SetJoystickData(x, y, twist);
-    //shoot!
-		theCatapult->SetMotorPower(1.0);
-    	theCatapult->SetStoppingPoint(165);
-		theCatapult->Fire();
-	auto_fired = true;
+  else if(!(auto_fired) && AutonomousTimer->Get() > 5){
+	   float x = 0;
+	   float y = 0;
+       float twist = 0;
+       theChassis->SetJoystickData(x, y, twist);
+	   //shoot!
+	   theCatapult->SetMotorPower(1.0);
+	   theCatapult->SetStoppingPoint(165);
+	   theCatapult->Fire();
+	   auto_fired = true;
   }
   else{
-  	float x = 0;
-  	float y = 0;
-  	float twist = 0;
-  	theChassis->SetJoystickData(x, y, twist);
+	  float x = 0;
+	  float y = 0;
+	  float twist = 0;
+	  theChassis->SetJoystickData(x, y, twist);
   }
-	theCatapult->Idle(); 
-	theChassis->Idle();
+//  if (target_range - optimal_range > range_tolerance && !(auto_fired) && AutonomousTimer->Get() < 9) {
+//    float x = 0;
+//    float y = 0.45;
+////    float y = 0.004347826*(target_range - optimal_range)+total_error*0.00000001;
+//    float twist = 0;
+//    theChassis->SetJoystickData(x, y, twist);
+//  }
+//  else if ((AutonomousTimer->Get() > 9 || 1 < num_targets) && !(auto_fired)) {
+//    //stop
+//    float x = 0;
+//    float y = 0;
+//    float twist = 0;
+//    theChassis->SetJoystickData(x, y, twist);
+//    //shoot!
+//		theCatapult->SetMotorPower(1.0);
+//    	theCatapult->SetStoppingPoint(165);
+//		theCatapult->Fire();
+//	auto_fired = true;
+//  }
+//  else{
+//  	float x = 0;
+//  	float y = 0;
+//  	float twist = 0;
+//  	theChassis->SetJoystickData(x, y, twist);
+//  }
+  	theChassis->Idle();
+  	theCatapult->Idle(); 
 	theCollector->Idle();
 }
 	
@@ -171,6 +194,12 @@ void robot::TeleopPeriodic() {
 	if(joystick->GetRawButton(8)){
 		theCatapult->SetStoppingPoint(80);
 	}
+	if(joystick->GetRawButton(9)){
+		theCollector->ManualRaise();
+	}
+	if(joystick->GetRawButton(11)){
+		theCollector->ReInit();
+	}
 	theCollector->ManualRoller(joystick->GetRawAxis(6));
 	theCatapult->Idle();
 	theChassis->Idle();
@@ -178,7 +207,7 @@ void robot::TeleopPeriodic() {
 }
 
 void robot::TestPeriodic(){
-	theCollector->ManualRaise();
+	theCollector->AssistedManualRaise();
 }
 
 START_ROBOT_CLASS(robot);
