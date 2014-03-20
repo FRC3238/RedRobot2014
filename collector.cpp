@@ -12,20 +12,17 @@ collector::collector(UINT8 liftingTalonPort, UINT8 rollerTalonPort, ArduinoI2C* 
 	this->I2C = I2C;
 }
 
-void collector::ReInit(){
+void collector::Run(){
+	collectorMode = standard;
 	collectorState = lowering;
 }
 
-void collector::Run(){
-	collectorMode = standard;
-}
-
-void collector::SetManualRollerMode(){
-	collectorMode = manualRoller;
-}
-
-void collector::ManualRoller(float power){
-	manualRollerTalonPower = power;
+void collector::ManualRoller(int power){
+	if(power == 0){}
+	else{
+		collectorMode = manualRoller;
+		manualRollerTalonPower = power;
+	}
 }
 
 int collector::GetBallSensorValue()
@@ -42,8 +39,12 @@ void collector::AssistedManualRaise(){
 	LiftingTalon->Set(0.3);
 }
 
-void collector::ManualRaise(){
-	collectorMode = manualRaise;
+void collector::ManualRaise(int direction){
+	if(direction == 0){}
+	else{
+		collectorMode = manualRaise;
+		manual_raise_direction = direction;
+	}
 }
 
 void collector::EnableProtectedMode(){
@@ -147,7 +148,12 @@ void collector::Idle(){
 	break;
 	
 	case manualRaise:
-		LiftingTalon->Set(0.45);
+		if(manual_raise_direction < 0){
+			LiftingTalon->Set(0.45);
+		}
+		else{
+			LiftingTalon->Set(-0.4);
+		}
 	break;
 	}
 }

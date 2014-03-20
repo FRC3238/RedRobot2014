@@ -8,28 +8,20 @@ class collector{
 	public:
 		collector(UINT8 liftingTalonPort, UINT8 rollerTalonPort, ArduinoI2C* ballSensorPort, UINT8 upperLimitSensorPort, UINT8 lowerLimitSensorPort);
 
-		//Sets the collector state to lowering
-		void ReInit();
-
 		//Runs the collector automatically, no driver input necessary
 		void Run();
 		
-		void SetManualRollerMode();
-		
-		void ManualRoller(float power);
+		void ManualRoller(int power);
 
 		//Returns the value from the ball sensor
 		int GetBallSensorValue();
 		
 		//Stops the collector roller and stops the arm in its current position
 		void Disable();
-
-		//Stops the collector roller and returns the arm to its upper position
-		void Reset();
 		
 		void AssistedManualRaise();
 		
-		void ManualRaise();
+		void ManualRaise(int direction);
 		
 		void EnableProtectedMode();
 		
@@ -46,7 +38,7 @@ class collector{
 		DigitalInput *LowerLimitSensor;
 		Timer *timer;
 		ArduinoI2C* I2C;
-		float manualRollerTalonPower;
+		int manualRollerTalonPower;
 		enum collectorState_t{
 			lowering,
 			waiting,
@@ -64,6 +56,7 @@ class collector{
 		};
 		collectorMode_t collectorMode;
 		bool protected_mode;
+		int manual_raise_direction;
 };
 
 #endif

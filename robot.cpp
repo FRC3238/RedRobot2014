@@ -26,7 +26,6 @@ void robot::RobotInit()
 	
 void robot::DisabledInit() 
 {
-	theCollector->ReInit();
 	theCatapult->ReInit();
 	AutonomousTimer->Stop();
 }
@@ -43,7 +42,6 @@ void robot::AutonomousInit()
 	correct_range_loops = 0;
 	theCatapult->ResetEncoder();
 	theCatapult->SetMotorPower(1.0);
-	theCollector->ReInit();
 	theCollector->Run();
 //	total_error = 0;
 }
@@ -222,33 +220,25 @@ void robot::TeleopPeriodic() {
 		theCollector->Disable();
 	}
 	if(joystick->GetRawButton(4)){
-		theCollector->SetManualRollerMode();
+		theCatapult->SetStoppingPoint(165);
 	}
 	if(joystick->GetRawButton(5)){
-		theCatapult->SetStoppingPoint(151);
+		theCatapult->SetStoppingPoint(80);
 	}
 	if(joystick->GetRawButton(6)){
 		theCatapult->ResetEncoder();
 	}
 	if(joystick->GetRawButton(7)){
-		theCatapult->SetStoppingPoint(100);
-	}
-	if(joystick->GetRawButton(8)){
-		theCatapult->SetStoppingPoint(80);
-	}
-	if(joystick->GetRawButton(9)){
-		theCollector->ManualRaise();
-	}
-	if(joystick->GetRawButton(10)){
-		theCollector->ReInit();
-	}
-	if(joystick->GetRawButton(11)){
 		theCollector->EnableProtectedMode();
 	}
-	if(joystick->GetRawButton(12)){
+	if(joystick->GetRawButton(8)){
 		theCollector->DisableProtectedMode();
 	}
-	theCollector->ManualRoller(joystick->GetRawAxis(6));
+	if(joystick->GetRawButton(9)){
+		theCatapult->SetStoppingPoint(100);
+	}
+	theCollector->ManualRaise(joystick->GetRawAxis(6));
+	theCollector->ManualRoller(joystick->GetRawAxis(5));
 	theCatapult->Idle();
 	theChassis->Idle();
 	theCollector->Idle();
