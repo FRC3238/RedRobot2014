@@ -30,6 +30,10 @@ class collector{
 		void AssistedManualRaise();
 		
 		void ManualRaise();
+		
+		void EnableProtectedMode();
+		
+		void DisableProtectedMode();
 
 		//Call this function every loop, this is where all the "work" is actually done
 		void Idle();
@@ -49,6 +53,7 @@ class collector{
 			waitforball,
 			raising,
 			mellowraise,
+			protectedLower,
 		};
 		collectorState_t collectorState;
 		enum collectorMode_t{
@@ -58,6 +63,7 @@ class collector{
 			manualRaise
 		};
 		collectorMode_t collectorMode;
+		bool protected_mode;
 };
 
 #endif

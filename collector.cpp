@@ -46,6 +46,14 @@ void collector::ManualRaise(){
 	collectorMode = manualRaise;
 }
 
+void collector::EnableProtectedMode(){
+	protected_mode = true;
+}
+
+void collector::DisableProtectedMode(){
+	protected_mode = false;
+}
+
 void collector::Idle(){
 	switch(collectorMode){
 	
@@ -99,6 +107,25 @@ void collector::Idle(){
 				if(GetBallSensorValue() > 350){
 					LiftingTalon->Set(0.3);
 					RollerTalon->Set(1.0);
+				}
+				else if(protected_mode){
+					collectorState = protectedLower;
+					timer->Reset();
+				}
+				else{
+					collectorState = lowering;
+				}
+			break;
+			
+			case protectedLower:
+				if(protected_mode){
+					if((timer->Get()*1000) < 300){
+						LiftingTalon->Set(-0.4);
+						RollerTalon->Set(0.0);
+					}
+					else{
+						LiftingTalon->Set(0.0);
+					}
 				}
 				else{
 					collectorState = lowering;
