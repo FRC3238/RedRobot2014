@@ -12,6 +12,8 @@ class collector{
 		void Run();
 		
 		void ManualRoller(int power);
+		
+		void SetAutomaticRollerPower(float automaticpower);
 
 		//Returns the value from the ball sensor
 		int GetBallSensorValue();
@@ -57,6 +59,7 @@ class collector{
 		collectorMode_t collectorMode;
 		bool protected_mode;
 		int manual_raise_direction;
+		float roller_power;
 };
 
 #endif

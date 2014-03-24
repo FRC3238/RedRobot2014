@@ -37,24 +37,35 @@ class robot : public IterativeRobot {
 		Timer *UnfoldingTimer;
 		bool buzzer_shot;
 		bool auto_fired;
+		bool unfolding_done;
 		int correct_range_loops;
+		int initial_num_targets;
 //		float total_error;
 		int error;
+		//int old_error;
 		int cummulative_error;
 		enum unfoldingState_t{
 			collectorLower,
-			shooterLower,
+			catapultLower,
+			waitingForCatapult,
 			done
 		};
 		unfoldingState_t unfoldingState;
-		enum movementState_t{
+		enum autonomousState_t{
 			waiting,
-			moving,
-			stopping,
-			shooting,
-			autonomousDone
+			running,
+			stopped
 		};
-		movementState_t movementState;
+		autonomousState_t autonomousState;
+//		For timing only autonomous
+//		enum movementState_t{
+//			waiting,
+//			moving,
+//			stopping,
+//			shooting,
+//			autonomousDone
+//		};
+//		movementState_t movementState;
 };
 
 #endif

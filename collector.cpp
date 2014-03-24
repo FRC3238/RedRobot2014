@@ -25,6 +25,10 @@ void collector::ManualRoller(int power){
 	}
 }
 
+void collector::SetAutomaticRollerPower(float automaticpower){
+	roller_power = automaticpower;
+}
+
 int collector::GetBallSensorValue()
 {
 	SmartDashboard::PutNumber("Ball Value", I2C->Ball);
@@ -75,7 +79,7 @@ void collector::Idle(){
 			case waiting:
 				if(GetBallSensorValue() < 350){
 					LiftingTalon->Set(0.0);
-					RollerTalon->Set(1.0);
+					RollerTalon->Set(roller_power);
 				}
 				else{
 					timer->Reset();
@@ -84,9 +88,9 @@ void collector::Idle(){
 			break;
 			
 			case waitforball:
-				if((timer->Get() * 1000.0) < 500.0){
+				if((timer->Get() * 1000.0) < 300.0){
 					LiftingTalon->Set(0.0);
-					RollerTalon->Set(1.0);
+					RollerTalon->Set(roller_power);
 				}
 				else{
 					timer->Reset();
@@ -97,7 +101,7 @@ void collector::Idle(){
 			case raising:
 				if((timer->Get() * 1000.0) < 750.0){
 					LiftingTalon->Set(0.6);
-					RollerTalon->Set(1.0);
+					RollerTalon->Set(roller_power);
 				}
 				else{
 					collectorState = lowering;
@@ -107,7 +111,7 @@ void collector::Idle(){
 			case mellowraise:
 				if(GetBallSensorValue() > 350){
 					LiftingTalon->Set(0.3);
-					RollerTalon->Set(1.0);
+					RollerTalon->Set(roller_power);
 				}
 				else if(protected_mode){
 					collectorState = protectedLower;
@@ -120,7 +124,7 @@ void collector::Idle(){
 			
 			case protectedLower:
 				if(protected_mode){
-					if((timer->Get()*1000) < 300){
+					if((timer->Get()*1000) < 10){
 						LiftingTalon->Set(-0.4);
 						RollerTalon->Set(0.0);
 					}

@@ -9,15 +9,15 @@ chassis::chassis(UINT8 leftFrontTalonPort, UINT8 leftRearTalonPort, UINT8 rightF
 	Drivetrain = new RobotDrive(LeftFrontTalon, LeftRearTalon, RightFrontTalon, RightRearTalon);
 	Drivetrain->SetInvertedMotor(RobotDrive::kFrontRightMotor, false);
 	Drivetrain->SetInvertedMotor(RobotDrive::kFrontLeftMotor, true);
-	Drivetrain->SetInvertedMotor(RobotDrive::kRearRightMotor, true);
-	Drivetrain->SetInvertedMotor(RobotDrive::kRearLeftMotor, false);
+	Drivetrain->SetInvertedMotor(RobotDrive::kRearRightMotor, false);
+	Drivetrain->SetInvertedMotor(RobotDrive::kRearLeftMotor, true);
 	chassisState = mecanum;
 }
 
 void chassis::SetJoystickData(float x, float y, float twist){
-	xValue = x;
-	yValue = y;
-	twistValue = twist;
+	xValue = -(x);
+	yValue = -(y);
+	twistValue = -(twist);
 }
 
 void chassis::EnableAxisLock(){
