@@ -55,6 +55,7 @@ void robot::TeleopInit()
 {
 	AutonomousTimer->Stop();
 	theCollector->SetAutomaticRollerPower(1.0);
+	theCatapult->SetMotorPower(1.0);
 }
 
 void robot::TestInit()
@@ -79,7 +80,7 @@ void robot::DisabledPeriodic()
 		I2C->GetValues(left, right,ball);
 	}
 	I2C->Idle();
-	theCatapult->SetStoppingPoint(151);
+	theCatapult->SetStoppingPoint(140);
 	theCollector->DisableProtectedMode();
 }
 
@@ -145,15 +146,15 @@ if(AutonomousTimer->Get() > 7 && !auto_fired && unfolding_done){ //Well it doesn
 	float twist = 0;
 	theChassis->SetJoystickData(x, y, twist);
 	theCatapult->SetMotorPower(1.0);
-	theCatapult->SetStoppingPoint(165);
+	theCatapult->SetStoppingPoint(135);
 	theCatapult->Fire();
 	auto_fired = true;
 }
-else if(I2C->GetRight() > 85){ //Moving to shooting range
-	error = I2C->GetRight() - 85;
+else if(I2C->GetRight() > 80){ //Moving to shooting range
+	error = I2C->GetRight() - 80;
 	cummulative_error += error;
-	float x = -.11; //correcting for chassis's tendancy to drift to one side
-	float y = -(((error)*(0.006))+(cummulative_error*0.0000)); //PI control
+	float x = 0;
+	float y = -(((error)*(0.006))+(cummulative_error*0.00005)); //PI control
 	float twist = 0;
 	theChassis->SetJoystickData(x, y, twist);
 }
@@ -163,7 +164,7 @@ else if(!auto_fired && initial_num_targets > 1 && unfolding_done){ //Have we not
      float twist = 0;
      theChassis->SetJoystickData(x, y, twist);
      theCatapult->SetMotorPower(1.0);
-     theCatapult->SetStoppingPoint(165);
+     theCatapult->SetStoppingPoint(135);
      theCatapult->Fire();
      auto_fired = true;
 }
@@ -239,7 +240,7 @@ break;
 //    theChassis->SetJoystickData(x, y, twist);
 //    //shoot!
 //		theCatapult->SetMotorPower(1.0);
-//    	theCatapult->SetStoppingPoint(165);
+//    	theCatapult->SetStoppingPoint(135);
 //		theCatapult->Fire();
 //	auto_fired = true;
 //  }
@@ -272,7 +273,7 @@ void robot::TeleopPeriodic() {
 		theCollector->Disable();
 	}
 	if(joystick->GetRawButton(4)){
-		theCatapult->SetStoppingPoint(150);
+		theCatapult->SetStoppingPoint(140);
 	}
 	if(joystick->GetRawButton(5)){
 		theCatapult->SetStoppingPoint(80);

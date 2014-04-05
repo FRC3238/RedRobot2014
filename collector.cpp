@@ -124,7 +124,7 @@ void collector::Idle(){
 			
 			case protectedLower:
 				if(protected_mode){
-					if((timer->Get()*1000) < 10){
+					if((timer->Get()*1000) < 100){
 						LiftingTalon->Set(-0.4);
 						RollerTalon->Set(0.0);
 					}
@@ -158,6 +158,7 @@ void collector::Idle(){
 		else{
 			LiftingTalon->Set(-0.4);
 		}
+		timer->Stop();
 	break;
 	}
 }
