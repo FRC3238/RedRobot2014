@@ -17,8 +17,8 @@ void collector::Run(){
 	collectorState = lowering;
 }
 
-void collector::ManualRoller(int power){
-	if(power == 0){}
+void collector::ManualRoller(float power){
+	if(power == 0.0){}
 	else{
 		collectorMode = manualRoller;
 		manualRollerTalonPower = power;

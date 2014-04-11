@@ -25,19 +25,23 @@ class robot : public IterativeRobot {
 		void TestPeriodic(void);
 	
 	private:
+		DriverStation *DS;
+		DriverStationEnhancedIO &DSEIO;
 		Joystick *joystick;
 		chassis *theChassis;
 		catapult *theCatapult;
 		collector *theCollector;
-		InsightLT insight;
-		IntegerData insight_ballDistance;
+//		InsightLT insight;
+//		IntegerData insight_encoder_count;
 		ArduinoI2C* I2C;
 		Timer *AutonomousTimer;
 		Servo *AutonomousServo;
 		Timer *UnfoldingTimer;
 		bool buzzer_shot;
 		bool auto_fired;
+		int auto_shots;
 		bool unfolding_done;
+		bool collector_started;
 		int correct_range_loops;
 		int initial_num_targets;
 //		float total_error;

@@ -11,7 +11,7 @@ class collector{
 		//Runs the collector automatically, no driver input necessary
 		void Run();
 		
-		void ManualRoller(int power);
+		void ManualRoller(float power);
 		
 		void SetAutomaticRollerPower(float automaticpower);
 
@@ -40,7 +40,7 @@ class collector{
 		DigitalInput *LowerLimitSensor;
 		Timer *timer;
 		ArduinoI2C* I2C;
-		int manualRollerTalonPower;
+		float manualRollerTalonPower;
 		enum collectorState_t{
 			lowering,
 			waiting,
